@@ -1,0 +1,53 @@
+meta {
+  name: Create issue
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/issues
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "title": "Charged twice for the same order",
+    "description": "My card was charged twice for order #48213.",
+    "priority": "high",
+    "category": "billing"
+  }
+}
+
+assert {
+  res.status: eq 201
+  res.body.data.status: eq open
+  res.body.data.summary_status: eq pending
+  res.body.data.needs_attention: eq true
+}
+
+script:post-response {
+  bru.setVar("issueId", res.body.data.id);
+}
+
+docs {
+  # Create issue
+
+  `POST /api/v1/issues`
+
+  | Field | Rules |
+  |-------|-------|
+  | `title` | required, string, max 255 |
+  | `description` | required, string, max 5000 |
+  | `priority` | required: `low`, `medium`, `high` |
+  | `category` | required, string, max 100 (free text) |
+  | `status` | optional: `open`, `in_progress`, `resolved`; defaults to `open` |
+
+  Strings are trimmed, so a whitespace-only value counts as missing.
+
+  `needs_attention`, `summary`, `suggested_next_action` and `summary_status` cannot be set by the client; they are ignored. `needs_attention` is `true` exactly when `priority` is `high`. `summary_status` starts as `pending`.
+
+  Response: `201` with the created issue under `data`. Invalid input returns `422`.
+
+  The post-response script stores the new id in the `issueId` runtime variable, so the Show and Update requests use it.
+}

@@ -1,0 +1,31 @@
+meta {
+  name: Validation error
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/issues
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "title": "   ",
+    "priority": "urgent"
+  }
+}
+
+assert {
+  res.status: eq 422
+  res.body.error.code: eq validation_failed
+  res.body.error.details.title: isDefined
+  res.body.error.details.priority: isDefined
+}
+
+docs {
+  # Validation error
+
+  Whitespace-only `title`, invalid `priority`, and missing `description` and `category`. Returns `422`; `error.details` maps each field to its messages.
+}

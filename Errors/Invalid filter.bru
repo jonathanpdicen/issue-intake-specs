@@ -1,0 +1,22 @@
+meta {
+  name: Invalid filter
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/issues?status=archived
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 422
+  res.body.error.details.status: isDefined
+}
+
+docs {
+  # Invalid filter
+
+  An unknown `status`, `priority`, `sort` value or an out-of-range `per_page` returns `422`.
+}

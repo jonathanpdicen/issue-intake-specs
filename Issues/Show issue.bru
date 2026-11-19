@@ -1,0 +1,26 @@
+meta {
+  name: Show issue
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/issues/{{issueId}}
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.data.id: isDefined
+}
+
+docs {
+  # Show issue
+
+  `GET /api/v1/issues/{issue}`
+
+  Response: `200` with the issue under `data`, or `404` with the standard error shape if the id does not exist.
+
+  Issue fields: `id`, `title`, `description`, `priority`, `category`, `status`, `summary`, `suggested_next_action`, `summary_status`, `needs_attention`, `created_at`, `updated_at`.
+}

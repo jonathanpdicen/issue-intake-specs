@@ -1,0 +1,30 @@
+meta {
+  name: Malformed JSON
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/issues
+  body: text
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:text {
+  {"title":
+}
+
+assert {
+  res.status: eq 400
+  res.body.error.code: eq bad_request
+}
+
+docs {
+  # Malformed JSON
+
+  A body that is not valid JSON, sent as `application/json`, returns `400` with `code: bad_request`.
+}

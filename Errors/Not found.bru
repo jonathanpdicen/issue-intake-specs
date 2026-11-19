@@ -1,0 +1,22 @@
+meta {
+  name: Not found
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/issues/999999
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 404
+  res.body.error.code: eq not_found
+}
+
+docs {
+  # Not found
+
+  Unknown issue id (or any unknown `/api/v1` route) returns `404` with `code: not_found`.
+}

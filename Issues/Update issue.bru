@@ -1,0 +1,34 @@
+meta {
+  name: Update issue
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/issues/{{issueId}}
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "status": "in_progress"
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.data.status: eq in_progress
+}
+
+docs {
+  # Update issue
+
+  `PATCH /api/v1/issues/{issue}` (`PUT` also works)
+
+  Send only the fields you want to change: `title`, `description`, `priority`, `category`, `status`. Each follows the same rules as on create, but is optional. A field that is present must not be empty.
+
+  `needs_attention` is recomputed whenever the issue is saved, so changing `priority` updates it. Read-only fields are ignored.
+
+  Response: `200` with the updated issue under `data`, `404` for an unknown id, `422` for invalid input.
+}

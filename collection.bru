@@ -1,0 +1,35 @@
+headers {
+  Accept: application/json
+}
+
+docs {
+  # Issue Intake API
+
+  Phase 1: issues only. No authentication yet.
+
+  Select the `local` environment (Lando, `http://issueintake.test/api/v1`).
+
+  ## Error shape
+
+  Every error under `/api/v1` uses the same JSON shape:
+
+  ```json
+  {"error": {"code": "validation_failed", "message": "...", "details": {"field": ["..."]}}}
+  ```
+
+  | Status | `code` | When |
+  |--------|--------|------|
+  | 400 | `bad_request` | Malformed JSON body |
+  | 404 | `not_found` | Unknown issue id or unknown route |
+  | 405 | `method_not_allowed` | Unsupported method (e.g. DELETE) |
+  | 422 | `validation_failed` | Invalid input; `details` lists errors per field |
+  | 500 | `server_error` | Unexpected error; generic message unless `APP_DEBUG=true` |
+
+  ## Enums
+
+  | Field | Values |
+  |-------|--------|
+  | `priority` | `low`, `medium`, `high` |
+  | `status` | `open`, `in_progress`, `resolved` |
+  | `summary_status` (read-only) | `pending`, `ready`, `failed` |
+}
