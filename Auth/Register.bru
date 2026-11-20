@@ -1,0 +1,48 @@
+meta {
+  name: Register
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/auth/register
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Jonh Doe",
+    "email": "johndoe@user.com",
+    "password": "Str0ng-Passw0rd!",
+    "password_confirmation": "Str0ng-Passw0rd!",
+    "device_name": "bruno"
+  }
+}
+
+assert {
+  res.status: eq 201
+  res.body.data.token: isString
+  res.body.data.user.email: eq priya@example.com
+}
+
+script:post-response {
+  if (res.status === 201) {
+    bru.setEnvVar("token", res.body.data.token);
+  }
+}
+
+docs {
+  # Register
+  
+  `POST /api/v1/auth/register`
+  
+  | Field | Rules |
+  |-------|-------|
+  | `name` | required, string, max 255 |
+  | `email` | required, valid email, max 255, unique |
+  | `password` | required, meets the default password rules, must match `password_confirmation` |
+  | `device_name` | required, string, max 255; labels the issued token |
+  
+  Response: `201` with `data.user` (`id`, `name`, `email`) and `data.token`. The token is saved to the `token` environment variable automatically. Invalid input returns `422`; more than 6 attempts per minute returns `429`.
+}

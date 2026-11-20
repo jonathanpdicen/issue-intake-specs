@@ -5,17 +5,21 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/issues?per_page=15&sort=-created_at
+  url: {{baseUrl}}/issues?per_page=15&sort=-created_at&status=open
   body: none
-  auth: none
+  auth: bearer
 }
 
 params:query {
   per_page: 15
   sort: -created_at
-  ~status: open
+  status: open
   ~priority: high
   ~category: billing
+}
+
+auth:bearer {
+  token: {{token}}
 }
 
 assert {
@@ -25,11 +29,11 @@ assert {
 
 docs {
   # List issues
-
+  
   `GET /api/v1/issues`
-
+  
   Returns a paginated list of issues. All query parameters are optional and filters can be combined.
-
+  
   | Parameter | Values | Default |
   |-----------|--------|---------|
   | `status` | `open`, `in_progress`, `resolved` | none |
@@ -37,10 +41,10 @@ docs {
   | `category` | exact match, free text (max 100) | none |
   | `per_page` | 1 to 100 | 15 |
   | `sort` | `created_at`, `priority`, `updated_at`; prefix `-` for descending | `-created_at` |
-
+  
   Invalid filter, `per_page` or `sort` values return `422`.
-
+  
   Sorting by `priority` follows the database enum order (low, medium, high) on MySQL.
-
+  
   Response: `200` with `data` (issues), `links` and `meta` (pagination).
 }

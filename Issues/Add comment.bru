@@ -1,0 +1,43 @@
+meta {
+  name: Add comment
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/issues/{{issueId}}/comments
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "author_name": "Priya Nair",
+    "body": "Refund issued, closing this out."
+  }
+}
+
+assert {
+  res.status: eq 201
+  res.body.data.id: isDefined
+  res.body.data.author_name: eq Priya Nair
+}
+
+docs {
+  # Add comment
+
+  `POST /api/v1/issues/{issue}/comments`
+
+  | Field | Rules |
+  |-------|-------|
+  | `author_name` | required, string, max 100 |
+  | `body` | required, string, max 5000 |
+
+  Strings are trimmed, so a whitespace-only value counts as missing. The comment always attaches to the issue in the URL; an `issue_id` in the body is ignored. Comments are immutable and adding one does not change the issue.
+
+  Response: `201` with the created comment under `data` (`id`, `issue_id`, `author_name`, `body`, `created_at`). Invalid input returns `422`; an unknown issue returns `404`.
+}

@@ -5,7 +5,9 @@ headers {
 docs {
   # Issue Intake API
 
-  Phase 1: issues only. No authentication yet.
+  Issues and issue comments, protected by Sanctum token authentication.
+
+  Run **Register** (or **Login**) first: it stores the bearer token in the `token` environment variable and every other request sends it. Only the Auth requests Register and Login are public.
 
   Select the `local` environment (Lando, `http://issueintake.test/api/v1`).
 
@@ -20,9 +22,11 @@ docs {
   | Status | `code` | When |
   |--------|--------|------|
   | 400 | `bad_request` | Malformed JSON body |
-  | 404 | `not_found` | Unknown issue id or unknown route |
+  | 401 | `unauthenticated` | Missing, invalid or revoked bearer token |
+  | 404 | `not_found` | Unknown issue id (also when commenting) or unknown route |
   | 405 | `method_not_allowed` | Unsupported method (e.g. DELETE) |
-  | 422 | `validation_failed` | Invalid input; `details` lists errors per field |
+  | 422 | `validation_failed` | Invalid input or wrong login credentials; `details` lists errors per field |
+  | 429 | `too_many_requests` | Register or login rate limit exceeded (6 per minute) |
   | 500 | `server_error` | Unexpected error; generic message unless `APP_DEBUG=true` |
 
   ## Enums

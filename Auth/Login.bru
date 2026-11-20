@@ -1,0 +1,44 @@
+meta {
+  name: Login
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "johndoe@user.com",
+    "password": "Str0ng-Passw0rd!",
+    "device_name": "bruno"
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.data.token: isString
+}
+
+script:post-response {
+  if (res.status === 200) {
+    bru.setEnvVar("token", res.body.data.token);
+  }
+}
+
+docs {
+  # Login
+  
+  `POST /api/v1/auth/login`
+  
+  | Field | Rules |
+  |-------|-------|
+  | `email` | required, valid email |
+  | `password` | required |
+  | `device_name` | required, string, max 255; labels the issued token |
+  
+  Response: `200` with `data.user` and `data.token`. The token is saved to the `token` environment variable automatically. Wrong credentials (or an unknown email) return `422` with an error on `email`; more than 6 attempts per minute returns `429`.
+}

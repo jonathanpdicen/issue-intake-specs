@@ -7,7 +7,11 @@ meta {
 get {
   url: {{baseUrl}}/issues/{{issueId}}
   body: none
-  auth: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
 }
 
 assert {
@@ -22,5 +26,7 @@ docs {
 
   Response: `200` with the issue under `data`, or `404` with the standard error shape if the id does not exist.
 
-  Issue fields: `id`, `title`, `description`, `priority`, `category`, `status`, `summary`, `suggested_next_action`, `summary_status`, `needs_attention`, `created_at`, `updated_at`.
+  Issue fields: `id`, `title`, `description`, `priority`, `category`, `status`, `summary`, `suggested_next_action`, `summary_status`, `needs_attention`, `created_at`, `updated_at`, `comments`.
+
+  `comments` lists the issue's comments, oldest first (empty array when there are none).
 }

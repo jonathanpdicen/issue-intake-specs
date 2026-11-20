@@ -1,0 +1,22 @@
+meta {
+  name: Unauthenticated
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/issues
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 401
+  res.body.error.code: eq unauthenticated
+}
+
+docs {
+  # Unauthenticated
+
+  A request without a valid bearer token returns `401` with `code: unauthenticated`.
+}
